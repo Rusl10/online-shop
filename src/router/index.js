@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import vCatalog from '../components/v-catalog'
-import vCart from '../components/v-cart'
+import vCatalog from '../components/catalog/v-catalog'
+import vCart from '../components/cart/v-cart'
 
 Vue.use(VueRouter)
 
@@ -15,7 +15,7 @@ Vue.use(VueRouter)
   {
     path: '/cart',
     name: 'cart',
-    component: () => import('../components/v-cart'),
+    component: () => import('../components/cart/v-cart'),
     props: true
   }
 ]
