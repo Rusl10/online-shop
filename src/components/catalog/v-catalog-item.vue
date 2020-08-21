@@ -28,6 +28,9 @@ export default {
   	sendProductToParent(){
   		this.$emit('sendProductToParent', this.product_data)
   	}
+  },
+  mounted(){
+    this.$set(this.product_data, 'quantity', 1)
   }
 }
 </script>
