@@ -1,32 +1,73 @@
 <template>
 	<div class="v-catalog">
-		
+    <v-notification 
+      :messages="messages"
+      ref="notification"
+    />
 		<router-link :to="{name: 'cart', params: {cart_data: cart}}">
 			<div class="v-catalog__link-to-cart">Cart: {{ cart.length }}</div>
 		</router-link>
 
 		<h1>Catalog</h1>
+    <div class="filters">
+    <v-select 
+    :categories="categories"
+    :selected="selected"
+    @select="sortByCategory"
+    />
+    <div class="range-slider">
+      <input 
+        type="range"
+        min="0"
+        max="10000"
+        step="100"
+        v-model.number="minPrice"
+        @change="setRangeSlides"
+      > 
+      <input 
+        type="range"
+        min="0"
+        max="10000"
+        step="100"
+        v-model.number="maxPrice"
+        @change="setRangeSlides" 
+      > 
+    </div>  
+    <div class="range-values">
+      <p>{{ minPrice }}</p>
+      <p>{{ maxPrice }}</p>
+    </div>
+    </div>
 		<div class="v-catalog__list">
 			<v-catalog-item
-			v-for="product in products"
+			v-for="product in filteredProducts"
 			:key="product.article"
 			:product_data="product"
-			@sendProductToParent="(product) => {
-				$store.commit('pushProductToCart', product)
-			}" 
+			@sendProductToParent="addInCart" 
 			/>
 		</div>
 	</div>
 </template>
 <script>
-import vCatalogItem from './v-catalog-item'	
+import vCatalogItem from './v-catalog-item'
+import vSelect from '../v-select'
+import vNotification from '../notifications/v-notification'
 import {mapGetters, mapActions, mapMutations} from 'vuex'
 export default {
   name: 'v-catalog',
   data () {
     return {
     	addedProducts: [],
-    
+      categories: [
+        {name: 'Все', value: 'all'},
+        {name: 'Мужские', value: 'м'},
+        {name: 'Женские', value: 'ж'},
+      ],
+      selected: 'Все',
+      sortedProducts: [],
+      minPrice: 0,
+      maxPrice: 10000,
+      messages: []
     }
   },
   computed: {
@@ -34,26 +75,67 @@ export default {
   		'products',
   		'cart'
   	]),
-  	// getProducts(){
-  	// 	return this.products
-  	// }
+    filteredProducts(){
+      if (this.sortedProducts.length) {
+        return this.sortedProducts
+      } else {
+        return this.products
+      }
+    }
   },
   methods: {
   	...mapActions([
-  		'getProductsFromAPI'
+  		'getProductsFromAPI',
+      'AddToCart'
   	]),
   	...mapMutations([
   		'pushProductToCart'
-  	])
+  	]),
+    addInCart(data){
+      this.AddToCart(data)
+      .then(() => {
+        this.messages.unshift({
+          name: 'Товар добавлен в корзину',
+          id: Date.now().toLocaleString(),
+          icon: 'check_circle'
+        })
+      })
+      .then(() => {
+        this.$refs.notification.hideNotification()
+      })
+    },
+    setRangeSlides(){
+      if (this.minPrice > this.maxPrice) {
+        let temp = this.maxPrice
+        this.maxPrice = this.minPrice
+        this.minPrice = temp
+      }
+      this.sortByCategory()
+    },
+    sortByCategory(category){
+      this.sortedProducts = [...this.products]
+      this.sortedProducts = this.sortedProducts.filter(item => {
+          
+          return item.price >= this.minPrice && item.price <= this.maxPrice
+      })
+      if (category) {
+        this.sortedProducts = this.sortedProducts.filter(e => {
+          this.selected = category.name
+          return e.category === category.name
+        }) 
+      } 
+    }
   },
   mounted(){
   	this.getProductsFromAPI()
   	.then((response) => {
-
+      this.sortByCategory()
   	})
   },
   components: {
-  	vCatalogItem
+  	vCatalogItem,
+    vSelect,
+    vNotification
   }
 }
 </script>

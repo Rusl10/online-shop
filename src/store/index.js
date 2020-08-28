@@ -56,7 +56,10 @@ export default new Vuex.Store({
   			console.log('error', error)
   			return error
   		})
-  	}
+  	},
+    AddToCart({commit}, product) {
+      commit('pushProductToCart', product);
+    },
   },
   getters: {
   	products: s => s.products,

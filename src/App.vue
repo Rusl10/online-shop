@@ -5,12 +5,14 @@
 </template>
 <script>
 import mainwrapper from './components/v-main-wrapper.vue' 
- 
 export default{
   data(){
     return {
       
     }
+  },
+  methods: {
+    
   },
   components: {
     mainwrapper
