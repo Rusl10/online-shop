@@ -5,7 +5,7 @@
 			<p>
 				{{cart_item.name}}
 			</p>
-			<p>{{ cart_item.price }}</p>
+			<p>{{ cart_item.price | toFix | formattedPrice }}</p>
 			<p>{{ cart_item.article }}</p>
 		</div>
 		<div class="v-cart-item__quantity">
@@ -20,6 +20,8 @@
 	</div>
 </template>
 <script>
+import toFix from '../../filters/toFix' 
+import formattedPrice from '../../filters/price-format' 
 export default {
   name: 'v-cart-item',
   props: {
@@ -33,6 +35,10 @@ export default {
   data () {
     return {
     }
+  },
+  filters: {
+    toFix,
+    formattedPrice
   },
   methods: {
   	deleteFromCart(){

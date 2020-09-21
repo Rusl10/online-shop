@@ -1,12 +1,13 @@
 <template>
 	<div class="v-main-wrapper">
+		<v-header />
 		<keep-alive>
 			<router-view></router-view>
 		</keep-alive>
 	</div>
 </template>
 <script>
-
+import vHeader from './catalog/layouts/v-header'
 import {mapGetters} from 'vuex'
 export default{
 	name: 'v-main-wrapper',
@@ -16,6 +17,9 @@ export default{
 	},
 	computed: {
 	},
+	components: {
+		vHeader
+	}
 }	
 </script>
 <style>

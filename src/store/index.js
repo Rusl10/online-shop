@@ -8,9 +8,14 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
   	products: [],
-  	cart: []
+  	cart: [],
+    searchKey: ''
   },
   mutations: {
+    addSearchFilterToState(state, searchFilter){
+      console.log('searchFilter', searchFilter);
+      state.searchKey = searchFilter
+    },
   	setProductsToState: (state, products) => {
   		state.products = products
   	},
@@ -63,7 +68,8 @@ export default new Vuex.Store({
   },
   getters: {
   	products: s => s.products,
-  	cart: s => s.cart
+  	cart: s => s.cart,
+    searchKey: s => s.searchKey
   },
   modules: {
   }

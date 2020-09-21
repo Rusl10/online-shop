@@ -1,5 +1,7 @@
 <template>
-	<div class="v-catalog-item">
+	<div class="v-catalog-item"
+    @click="productClick"
+  >
     <v-popup
       v-if="isPopupVisible"
       @closePopup="closePopup"
@@ -10,7 +12,7 @@
       <img class="v-catalog-item__image" :src="require('../../assets/images/' + product_data.image)" alt="img">
     <div>
       <p class="v-catalog-item__name">{{ product_data.name }}</p>
-      <p class="v-catalog-item__price">Price: {{ product_data.price }}</p>
+      <p class="v-catalog-item__price">Price: {{ product_data.price | toFix | formattedPrice }}</p>
       <p class="v-catalog-item__category">Category: {{ product_data.category }}</p>
     </div>
     </v-popup>
@@ -18,7 +20,7 @@
 
 		<img class="v-catalog-item__image" :src="require('../../assets/images/' + product_data.image)" alt="img">
 		<p class="v-catalog-item__name">{{ product_data.name }}</p>
-		<p class="v-catalog-item__price">Price: {{ product_data.price }}</p>
+		<p class="v-catalog-item__price">Price: {{ product_data.price | toFix | formattedPrice }}</p>
     <button 
       class="v-catalog-item__show-info"
       @click="showPopupInfo"
@@ -27,7 +29,9 @@
 	</div>
 </template>
 <script>
-import vPopup from '../popup/v-popup'  
+import vPopup from '../popup/v-popup'
+ import toFix from '../../filters/toFix'
+ import formattedPrice from '../../filters/price-format'
 export default {
   name: 'v-catalog-item',
   props: {
@@ -45,6 +49,10 @@ export default {
       isPopupVisible: false
     }
   },
+  filters: {
+      toFix,
+      formattedPrice
+    },
   methods: {
   	sendProductToParent(){
   		this.$emit('sendProductToParent', this.product_data)
@@ -54,6 +62,9 @@ export default {
     },
     closePopup(){
       this.isPopupVisible = false
+    },
+    productClick(){
+      this.$emit('productClick')
     }
   },
   mounted(){

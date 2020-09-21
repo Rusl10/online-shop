@@ -61,7 +61,11 @@ export default {
   	})
   },
   beforeDestroy(){
-  	document.removeEventListener('click')
+  	document.removeEventListener('click', (item) => {
+  		if (item.target === this.$refs['popup-wrapper']) {
+  			this.$emit('closePopup')
+  		}
+  	})
   }
 }
 </script>
@@ -78,7 +82,7 @@ export default {
 	bottom: 0;
 }
 .v-popup {
-	padding: 16px;
+	padding: 16px 40px;
 	width: 400px;
 	position: fixed;
 	z-index: 100;
@@ -97,8 +101,9 @@ export default {
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		
 	}
-
+	
 	.submit-btn {
 		padding: 8px;
 		color: #fff;

@@ -43,7 +43,8 @@
 			v-for="product in filteredProducts"
 			:key="product.article"
 			:product_data="product"
-			@sendProductToParent="addInCart" 
+			@sendProductToParent="addInCart"
+      @productClick="productClick(product)"
 			/>
 		</div>
 	</div>
@@ -52,7 +53,7 @@
 import vCatalogItem from './v-catalog-item'
 import vSelect from '../v-select'
 import vNotification from '../notifications/v-notification'
-import {mapGetters, mapActions, mapMutations} from 'vuex'
+import {mapState, mapActions, mapMutations} from 'vuex'
 export default {
   name: 'v-catalog',
   data () {
@@ -71,9 +72,10 @@ export default {
     }
   },
   computed: {
-  	...mapGetters([
+  	...mapState([
   		'products',
-  		'cart'
+  		'cart',
+      'searchKey'
   	]),
     filteredProducts(){
       if (this.sortedProducts.length) {
@@ -91,6 +93,9 @@ export default {
   	...mapMutations([
   		'pushProductToCart'
   	]),
+    productClick(product){
+      this.$router.push({ name: 'products', query: { 'product': product.article }})
+    },
     addInCart(data){
       this.AddToCart(data)
       .then(() => {
@@ -124,12 +129,30 @@ export default {
           return e.category === category.name
         }) 
       } 
+    },
+    sortedProductsBySearchValue(value){
+      this.sortedProducts = [...this.products]
+      if (value) {
+
+        this.sortedProducts = this.sortedProducts.filter(item => {
+          return item.name.toLowerCase().includes(value.toLowerCase())
+
+        })
+      } else {
+        this.sortedProducts = this.products
+      }
+    }
+  },
+  watch: {
+    searchKey(){
+      this.sortedProductsBySearchValue(this.searchKey)
     }
   },
   mounted(){
   	this.getProductsFromAPI()
   	.then((response) => {
       this.sortByCategory()
+      this.sortedProductsBySearchValue(this.searchKey)
   	})
   },
   components: {

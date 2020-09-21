@@ -16,12 +16,14 @@
 		v-if="cart_data.length"
 		>
 			<p class="total__name">Total: </p>
-			<p>{{ calcSum }} Р.</p>
+			<p>{{ calcSum | toFix | formattedPrice }} Р.</p>
 		</div>
 	</div>
 </template>
 <script>
-import vCartItem from './v-cart-item.vue'	
+import vCartItem from './v-cart-item.vue'
+import toFix from '../../filters/toFix'	
+import formattedPrice from '../../filters/price-format' 
 export default {
   name: 'v-cart',
   props: {
@@ -35,6 +37,9 @@ export default {
   data () {
     return {
     }
+  },
+  filters: {
+    toFix, formattedPrice
   },
   computed: {
   	calcSum(){
